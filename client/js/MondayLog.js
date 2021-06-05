@@ -30,7 +30,7 @@ export class MondayLog {
             "VarValue": null,
         };
 
-        httpRequest(this.url, json_encode(data));
+        httpRequest(this.url, data);
     }
 
     endCheckpoint(checkpoint, location = null) {
@@ -43,7 +43,7 @@ export class MondayLog {
             "VarValue": null,
         };
 
-        httpRequest(this.url, json_encode(data));
+        httpRequest(this.url, data);
     }
 
     variable(name, value, location = null) {
@@ -56,7 +56,7 @@ export class MondayLog {
             "VarValue": value,
         };
 
-        httpRequest(this.url, json_encode(data));
+        httpRequest(this.url, data);
     }
 
     input(name, value, location = null) {
@@ -69,7 +69,7 @@ export class MondayLog {
             "VarValue": value,
         };
 
-        httpRequest(this.url, json_encode(data));
+        httpRequest(this.url, data);
     }
 
     output(name, value, location = null) {
@@ -82,7 +82,7 @@ export class MondayLog {
             "VarValue": value,
         };
 
-        httpRequest(this.url, json_encode(data));
+        httpRequest(this.url, data);
     }
 
     error(message, location = null) {
@@ -95,7 +95,7 @@ export class MondayLog {
             "VarValue": null,
         };
 
-        httpRequest(this.url, json_encode(data));
+        httpRequest(this.url, data);
     }
 
     warn(message, location = null) {
@@ -108,7 +108,7 @@ export class MondayLog {
             "VarValue": null,
         };
 
-        httpRequest(this.url, json_encode(data));
+        httpRequest(this.url, data);
     }
 
     info(message, location = null) {
@@ -121,7 +121,7 @@ export class MondayLog {
             "VarValue": null,
         };
 
-        httpRequest(this.url, json_encode(data));
+        httpRequest(this.url, data);
     }
 
     debug(message, location = null) {
@@ -134,7 +134,7 @@ export class MondayLog {
             "VarValue": null,
         };
 
-        httpRequest(this.url, json_encode(data));
+        httpRequest(this.url, data);
     }
 
     trace(message, location = null) {
@@ -147,7 +147,7 @@ export class MondayLog {
             "VarValue": null,
         };
 
-        httpRequest(this.url, json_encode(data));
+        httpRequest(this.url, data);
     }
 }
 
@@ -165,45 +165,26 @@ function json_encode(data) {
 //     return this.charset == 'UTF-8' ? text : iconv(this.charset, "UTF-8//TRANSLIT//IGNORE", text);
 // }
 
-function httpRequest(url, data) {
-    console.log(data);
-    return fetch(url, {
-        body: JSON.stringify(data), // must match 'Content-Type' header
-        cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
-        credentials: 'same-origin', // include, same-origin, *omit
-        headers: {
-          'user-agent': 'Mozilla/4.0 MDN Example',
-          'content-type': 'application/json'
-        },
-        method: 'POST', // *GET, POST, PUT, DELETE, etc.
-        mode: 'no-cors', // no-cors, cors, *same-origin
-        redirect: 'follow', // manual, *follow, error
-        referrer: 'no-referrer', // *client, no-referrer
-    }).then(response => {
-        if (response.status != 200) {
-            throw new Exception('[ERROR] Send message to Monday Log Server...failed');
+
+function httpRequest(url,data) {
+    var xmlhttp;
+    xmlhttp = new XMLHttpRequest();
+
+    xmlhttp.onload = function () {
+        if (xmlhttp.status != 200) {
+            console.error('[ERROR] Send message to Monday Log Server...failed');
         }
-    }).catch(error => {
-        console.error("[ERROR] cURL Error (" + error + "):" + error)
-    })
+        var response =xmlhttp.response;
+        console.log(response)
+    }
+
+    xmlhttp.onerror = function(){
+        console.error("[ERROR] cURL Error (" + xmlhttp.error + "):" + xmlhttp.error)
+    }
+
+    xmlhttp.open("POST", url, false);
+    // xmlhttp.setRequestHeader('user-agent', 'MondayLogClient/1.0 (+https://github.com/fifilyu/monday-log-server)');
+    xmlhttp.setRequestHeader("content-type", "application/json");
+    // xmlhttp.setRequestHeader("Origin","http://127.0.0.1:8000i");
+    xmlhttp.send(JSON.stringify(data));
 }
-
-// function httpRequest(url,data) {
-//     var xmlhttp;
-//     xmlhttp = new XMLHttpRequest();
-
-//     xmlhttp.onload = function () {
-//         if (xmlhttp.response.status != 200) {
-//             throw new Exception('[ERROR] Send message to Monday Log Server...failed');
-//         }
-//     }
-
-//     xmlhttp.onerror = function(){
-//         console.error("[ERROR] cURL Error (" + xmlhttp.error + "):" + xmlhttp.error)
-//     }
-
-//     xmlhttp.open("POST", url, true);
-//     xmlhttp.setRequestHeader('yser-agent', 'MondayLogClient/1.0 (+https://github.com/fifilyu/monday-log-server)');
-//     xmlhttp.setRequestHeader("content-type", "application/json; charset=utf-8");
-//     xmlhttp.send(data);
-// }
